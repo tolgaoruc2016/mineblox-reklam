@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MineBloxYT2016 Reklam Yayınlama platformu</title>
+  <style>
+    :root {
+      --bg: #050508;
+      --cyan: #00f0ff;
+      --magenta: #ff2bd6;
+      --lime: #c6ff3d;
+      --red: #ff2a45;
+      --text: #f4f7ff;
+      --muted: #8b93a7;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Noto Sans", system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .glow-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 40% at 15% 10%, rgba(0, 240, 255, 0.16), transparent 60%),
+        radial-gradient(ellipse 45% 40% at 90% 85%, rgba(255, 43, 214, 0.18), transparent 60%),
+        linear-gradient(180deg, #050508 0%, #070712 100%);
+      z-index: 0;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #confetti {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(720px, calc(100% - 32px));
+      padding: 28px 28px 24px;
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 22px;
+      background: rgba(8, 8, 16, 0.82);
+      box-shadow:
+        0 0 0 1px rgba(255, 43, 214, 0.15),
+        0 0 40px rgba(0, 240, 255, 0.12),
+        inset 0 0 60px rgba(0, 240, 255, 0.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      text-align: center;
+      letter-spacing: 0.42em;
+      font-size: 12px;
+      color: var(--cyan);
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+    }
+
+    .steps {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin: 0 0 28px;
+      padding: 0;
+    }
+
+    .steps li {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--muted);
+      font-weight: 700;
+      position: relative;
+    }
+
+    .steps li.active {
+      color: #041016;
+      background: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.85);
+    }
+
+    .steps li.done {
+      color: #041016;
+      background: var(--lime);
+      border-color: var(--lime);
+      box-shadow: 0 0 14px rgba(198, 255, 61, 0.7);
+    }
+
+    .steps li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 48px;
+      width: 16px;
+      height: 2px;
+      background: rgba(0, 240, 255, 0.35);
+    }
+
+    .stage {
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 700;
+      line-height: 1.25;
+      text-shadow: 0 0 18px rgba(0, 240, 255, 0.45);
+    }
+
+    .publish {
+      font-size: clamp(42px, 8vw, 72px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--cyan), var(--lime) 45%, var(--magenta));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 18px rgba(0, 240, 255, 0.55));
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.4)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 0 28px rgba(255, 43, 214, 0.7)); }
+    }
+
+    .download {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #041016;
+      background: linear-gradient(90deg, var(--cyan), #7af7ff);
+      box-shadow: 0 0 22px rgba(0, 240, 255, 0.55);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .download:hover { filter: brightness(1.08); }
+
+    .warning {
+      margin: 0;
+      padding: 14px 22px;
+      border-radius: 12px;
+      background: rgba(255, 42, 69, 0.16);
+      border: 1px solid var(--red);
+      color: #ff6b7d;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 0 18px rgba(255, 42, 69, 0.35);
+    }
+
+    .link-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .link {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 240, 255, 0.45);
+      background: rgba(0, 240, 255, 0.06);
+      color: var(--cyan);
+      font-size: 15px;
+      word-break: break-all;
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+    }
+
+    .copy {
+      appearance: none;
+      border: 1px solid var(--magenta);
+      background: rgba(255, 43, 214, 0.12);
+      color: #ffd0f4;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(255, 43, 214, 0.35);
+    }
+
+    .copy.copied {
+      border-color: var(--lime);
+      color: var(--lime);
+      box-shadow: 0 0 14px rgba(198, 255, 61, 0.45);
+    }
+
+    .footer {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .timer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .count {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cyan);
+      border: 2px solid rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .count.ready {
+      color: var(--lime);
+      border-color: var(--lime);
+      box-shadow: 0 0 16px rgba(198, 255, 61, 0.45);
+    }
+
+    .next {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 26px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      color: #041016;
+      background: linear-gradient(90deg, var(--lime), #e8ff9a);
+      box-shadow: 0 0 20px rgba(198, 255, 61, 0.45);
+    }
+
+    .next:disabled {
+      cursor: not-allowed;
+      color: #6d7384;
+      background: #1a1c26;
+      box-shadow: none;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 560px) {
+      main { padding: 20px 16px; }
+      .footer { flex-direction: column; align-items: stretch; }
+      .next { width: 100%; }
+      .timer { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-bg"></div>
+  <div class="grid"></div>
+  <canvas id="confetti"></canvas>
+
+  <main>
+    <p class="eyebrow">MineBloxYT2016</p>
+    <ol class="steps" id="steps">
+      <li class="active">1</li>
+      <li>2</li>
+      <li>3</li>
+    </ol>
+
+    <section class="stage" id="stage"></section>
+
+    <div class="footer" id="footer">
+      <div class="timer">
+        <div class="count" id="count">10</div>
+        <span id="timer-label">Sonraki adıma kalan süre</span>
+      </div>
+      <button class="next" id="next" type="button" disabled>Sonraki adım</button>
+    </div>
+  </main>
+
+  <script>
+    const LINK = "https://www.youtube.com/@MineBloxYT2016";
+    const WAIT = 10;
+    const stage = document.getElementById("stage");
+    const nextBtn = document.getElementById("next");
+    const countEl = document.getElementById("count");
+    const footer = document.getElementById("footer");
+    const stepDots = document.querySelectorAll("#steps li");
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    let step = 1;
+    let left = WAIT;
+    let timer = null;
+    let pieces = [];
+    let confettiOn = false;
+
+    function render() {
+      stepDots.forEach((dot, i) => {
+        dot.classList.toggle("active", i + 1 === step);
+        dot.classList.toggle("done", i + 1 < step);
+      });
+
+      if (step === 1) {
+        stage.innerHTML = `
+          <a class="download" id="download" href="video.mp4" download="video.mp4" target="_blank">Dosyayı indir</a>
+          <h1>Bu dosyayı YouTube Studio'ya yükleyin.</h1>
+          <p class="warning">Şimdi yayınlamayın</p>
+        `;
+        footer.classList.remove("hidden");
+        startCountdown();
+        return;
+      }
+
+      if (step === 2) {
+        stage.innerHTML = `
+          <h1>Videonun açıklamasına bağlantıyı yapıştırın:</h1>
+          <div class="link-row">
+            <p class="link" id="link">${LINK}</p>
+            <button class="copy" id="copy" type="button">Kopyala</button>
+          </div>
+        `;
+        document.getElementById("copy").addEventListener("click", copyLink);
+        footer.classList.remove("hidden");
+        startCountdown();
+        return;
+      }
+
+      stage.innerHTML = `<h1 class="publish">Şimdi yayınlayın</h1>`;
+      footer.classList.add("hidden");
+      clearInterval(timer);
+      burstConfetti();
+    }
+
+    function startCountdown() {
+      clearInterval(timer);
+      left = WAIT;
+      nextBtn.disabled = true;
+      countEl.textContent = String(left);
+      countEl.classList.remove("ready");
+      document.getElementById("timer-label").textContent = "Sonraki adıma kalan süre";
+      timer = setInterval(() => {
+        left -= 1;
+        countEl.textContent = String(Math.max(left, 0));
+        if (left <= 0) {
+          clearInterval(timer);
+          nextBtn.disabled = false;
+          countEl.classList.add("ready");
+          document.getElementById("timer-label").textContent = "Devam edebilirsiniz";
+        }
+      }, 1000);
+    }
+
+    async function copyLink() {
+      const button = document.getElementById("copy");
+      try {
+        await navigator.clipboard.writeText(LINK);
+      } catch (err) {
+        const area = document.createElement("textarea");
+        area.value = LINK;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+      button.textContent = "Kopyalandı";
+      button.classList.add("copied");
+      setTimeout(() => {
+        button.textContent = "Kopyala";
+        button.classList.remove("copied");
+      }, 1600);
+    }
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function spawnConfetti(count) {
+      const colors = ["#00f0ff", "#ff2bd6", "#c6ff3d", "#ffe14a", "#ff4d6d", "#ffffff"];
+      const originX = canvas.width / 2;
+      const originY = canvas.height * 0.42;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 5 + Math.random() * 14;
+        pieces.push({
+          x: originX + (Math.random() - 0.5) * 80,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 6,
+          w: 8 + Math.random() * 8,
+          h: 10 + Math.random() * 12,
+          color: colors[i % colors.length],
+          rot: Math.random() * Math.PI,
+          spin: (Math.random() - 0.5) * 0.3,
+          life: 170 + Math.random() * 50
+        });
+      }
+    }
+
+    function burstConfetti() {
+      resize();
+      pieces = [];
+      spawnConfetti(160);
+      setTimeout(() => spawnConfetti(90), 280);
+      setTimeout(() => spawnConfetti(70), 560);
+      if (!confettiOn) {
+        confettiOn = true;
+        requestAnimationFrame(drawConfetti);
+      }
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;
+        p.vx *= 0.99;
+        p.rot += p.spin;
+        p.life -= 1;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(p.life / 160, 0);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      pieces = pieces.filter((p) => p.life > 0 && p.y < canvas.height + 40);
+      if (pieces.length) {
+        requestAnimationFrame(drawConfetti);
+      } else {
+        confettiOn = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (nextBtn.disabled || step >= 3) return;
+      step += 1;
+      render();
+    });
+
+    window.addEventListener("resize", resize);
+    resize();
+    render();
+  </script>
+</body>
+</html>
